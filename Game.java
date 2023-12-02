@@ -47,6 +47,7 @@ public class Game {
             System.out.println("Ronda:" + rondasJugadas);
             System.out.println("Coordenadas de celdas vivas:");
             System.out.println(celulasVivas);
+            nextGen();
             Print(celulasVivas);
             rondasJugadas++;
         }
@@ -54,9 +55,50 @@ public class Game {
     }
 
     public void nextGen() {
-        
-        
-        
+        ArrayList<String> nuevasCelulasVivas = new ArrayList<>();
+
+        for (int fila = 0; fila < tableroGeneracionActual.length; fila++) {
+            for (int columna = 0; columna < tableroGeneracionActual[fila].length; columna++) {
+                if (fila == 0 || columna == 0 || fila == tableroGeneracionActual.length - 1 || columna == tableroGeneracionActual[0].length - 1) {
+                    continue;
+                }
+
+                int vecinosVivos = 0;
+                for (int x = 0; x < 3; x++) {
+                    for (int y = 0; y < 3; y++) {
+                        if (x == 0 && y == 0) {
+                            continue;
+                        }
+                        int vecinoFila = fila + x;
+                        int vecinoColumna = columna + y;
+                        if (vecinoFila >= 0 && vecinoFila < tableroGeneracionActual.length && vecinoColumna >= 0 && vecinoColumna < tableroGeneracionActual[0].length) {
+                            vecinosVivos += tableroGeneracionActual[vecinoFila][vecinoColumna];
+                        }
+                    }
+                }
+
+                if (tableroGeneracionActual[fila][columna] == 1 && (vecinosVivos == 2 || vecinosVivos == 3)) {
+                    tableroSiguienteGeneracion[fila][columna] = 1;
+                    nuevasCelulasVivas.add(fila + ":" + columna);
+                } else if (tableroGeneracionActual[fila][columna] == 0 && vecinosVivos == 3) {
+                    tableroSiguienteGeneracion[fila][columna] = 1;
+                    nuevasCelulasVivas.add(fila + ":" + columna);
+                } else {
+                    tableroSiguienteGeneracion[fila][columna] = 0;
+                }
+            }
+        }
+
+        for (int i = 0; i < tableroGeneracionActual.length; i++) {
+            for (int j = 0; j < tableroGeneracionActual[i].length; j++) {
+                tableroGeneracionActual[i][j] = tableroSiguienteGeneracion[i][j];
+            }
+        }
+
+        celulasVivas.clear();
+        for (int i = 0; i < nuevasCelulasVivas.size(); i++) {
+            celulasVivas.add(nuevasCelulasVivas.get(i));
+        }
     }
 
     public void Print(ArrayList<String> coords) {
